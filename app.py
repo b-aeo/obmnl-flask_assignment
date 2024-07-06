@@ -26,12 +26,41 @@ def add_transaction():
         return render_template("form.html")
 
     elif request.method == "POST":
-        transactions.append(request.form)
+
+        transaction = {
+            "id" : len(transactions) + 1
+            "date" : request.form[date]
+            "amount" : request.form[amount]
+        }
+        transactions.append(transaction)
         return redirect(url_for(get_transactions))
 
 # Update operation
 
+@app.route("/edit/<int:transaction_id>", methods = ["GET", "POST"])
+def edit_transaction(add_transaction_id):
+    if request.method == "GET":
+        for dic in transactions:
+            if add_transaction_id in dic.values():
+                return render_template("edit.html", transaction=transaction)
+    
+    elif request.method == "POST":
+        counter = 0
+         for dic in transactions:
+            if add_transaction_id in dic.values():
+                transaction = {
+                "id" : len(transactions) + 1
+                "date" : request.form[date]
+                "amount" : request.form[amount]
+            }
+                transactions[counter] = transaction
+                return redirect(url_for(get_transactions))
+            
+            counter += 1
+
 # Delete operation
+
+
 
 # Run the Flask app
     
