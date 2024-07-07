@@ -28,39 +28,67 @@ def add_transaction():
     elif request.method == "POST":
 
         transaction = {
-            "id" : len(transactions) + 1
-            "date" : request.form[date]
-            "amount" : request.form[amount]
+            "id" : len(transactions) + 1,
+            "date" : request.form["date"],
+            "amount" : request.form["amount"]
         }
         transactions.append(transaction)
-        return redirect(url_for(get_transactions))
+        return redirect(url_for("get_transactions"))
 
 # Update operation
 
 @app.route("/edit/<int:transaction_id>", methods = ["GET", "POST"])
-def edit_transaction(add_transaction_id):
+def edit_transaction(transaction_id):
     if request.method == "GET":
         for dic in transactions:
-            if add_transaction_id in dic.values():
-                return render_template("edit.html", transaction=transaction)
+            if transaction_id in dic.values():
+                return render_template("edit.html", transaction=dic)
     
     elif request.method == "POST":
         counter = 0
-         for dic in transactions:
-            if add_transaction_id in dic.values():
+        for dic in transactions:
+            if transaction_id in dic.values():
                 transaction = {
-                "id" : len(transactions) + 1
-                "date" : request.form[date]
-                "amount" : request.form[amount]
-            }
+                "id" : len(transactions) + 1,
+                "date" : request.form["date"],
+                "amount" : request.form["amount"]
+                }
                 transactions[counter] = transaction
-                return redirect(url_for(get_transactions))
+                return redirect(url_for("get_transactions"))
             
             counter += 1
 
 # Delete operation
 
+@app.route("/delete/<int:transaction_id>")
+def delete_transaction(transaction_id):
+    counter = 0
+    for dic in transactions:
+        if transaction_id in dic.values():
+            del transactions[counter]
+            return redirect(url_for("get_transactions"))
+        counter += 1
+
+
+## Search Transactions
+
+@app.route("/search", methods = ["GET", "POST"])
+def search_transactions():
+    if request.method == "POST":
+        min1 = float(request.form["min_amount"])
+        max2 = float(request.form["max_amount"])
+        filtered_transactions = []
+        for dic in transactions:
+            if min1 <= float(dic.get("amount")) <= max2:
+                filtered_transactions.append(dic)
+        return render_template("transactions.html", transaction = filtered_transactions)
+    elif request.method == "GET":
+        return render_template("search.html")
 
 
 # Run the Flask app
     
+if __name__ == "__main__":
+    app.run(debug = True)
+
+
