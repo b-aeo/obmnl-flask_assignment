@@ -16,7 +16,10 @@ transactions = [
 
 @app.route("/")
 def get_transactions():
-    return render_template("transactions.html", transactions = transactions)
+    balance = 0
+    for dic in transactions:
+        balance += dic.get("amount")
+    return render_template("transactions.html", transactions = transactions, total_balance = balance)
 
 # Create operation
 
@@ -81,9 +84,18 @@ def search_transactions():
         for dic in transactions:
             if min1 <= float(dic.get("amount")) <= max2:
                 filtered_transactions.append(dic)
-        return render_template("transactions.html", transaction = filtered_transactions)
+        return render_template("transactions.html", transactions = filtered_transactions)
     elif request.method == "GET":
         return render_template("search.html")
+
+## Total balance feature
+
+@app.route("/balance")
+def total_balance():
+    balance = 0
+    for dic in transactions:
+        balance += dic.get("amount")
+    return str(f"Total Balance : {balance}")
 
 
 # Run the Flask app
